@@ -12,6 +12,7 @@
 
 
 ## Survey Progress
+- [ ] Manually label the projects into categories. 
 - [ ] Once the development work is completed, we will start to crawl the data from the target repositories. 
   - [ ] The first study target is MoveIt: https://https://github.com/ros-planning/moveit
     - [ ] Issues categorization
