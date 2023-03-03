@@ -1,6 +1,8 @@
 import requests
 from github import Github
 import github
+import sqlite3
+from tqdm import tqdm
 
 
 def login_github(token_file = "secret_token"):
@@ -17,10 +19,43 @@ def get_user_repo(g):
     return repo
 
 
+def save_issue(issue, is_PR:int, fix_issue_id:int):
+    # save the issue in a sqlite3 db. 
+    # the db should have the following fields:
+    # issue_id, is_PR, fix_issue_id, issue_title, issue_body, issue_comments, 
+
+    # 1. create a db "issues.db" if not exist
+    db = sqlite3.connect("issues.db")
+    # 2. create a table "issues" if not exist
+    db.execute('''CREATE TABLE IF NOT EXISTS issues
+                (issue_id INTEGER PRIMARY KEY, is_PR INTEGER, fix_issue_id INTEGER, issue_title TEXT, issue_body TEXT, issue_comments TEXT)''')
+    # 3. parse the required fields
+    try:
+        issue_id = int(issue.id)
+        issue_title = str(issue.title)
+        issue_body = str(issue.body)
+        issue_comments = []
+        for comment in issue.get_comments():
+            issue_comments.append(str(comment.body))
+        # 4. insert the issue into the db
+        db.execute("INSERT INTO issues VALUES (?, ?, ?, ?, ?, ?)", (issue_id, is_PR, fix_issue_id, issue_title, issue_body, str(issue_comments)))
+        db.commit()
+
+    except Exception as e:
+        print("Encountered exception when saving the issue: ", e)
+        
+    finally:
+        db.close()
+
+def issue_handler(issue):
+    # the general strategy is to 
+    pass
+
+
 def get_issues(repo_name):
     repo = g.get_repo(repo_name)
     closed_issues = repo.get_issues(state='closed')
-    for issue in closed_issues:
+    for issue in tqdm(closed_issues):
         # check if it is a PR
         linked_issue_number = None
         try:
@@ -44,8 +79,11 @@ def get_issues(repo_name):
                         linked_issue_number = None
                         continue
             if linked_issue_number is not None:
-                print("PR: ", issue.as_pull_request())
-                print("Linked Issue: ", linked_issue)
+                # print("PR: ", issue.as_pull_request())
+                # print("Linked Issue: ", linked_issue)
+                ## save both the PR and the linked issue
+                save_issue(issue, 1, linked_issue_number)
+                save_issue(linked_issue, 0, None)
         
         # Issue is not a PR
         except github.GithubException as e:
@@ -66,8 +104,18 @@ if __name__ == "__main__":
     g = login_github()
     # repos = get_user_repo(g)
 
-    # query moveit as an example
-    # url: https://github.com/ros-planning/moveit
-    repo_name = "ros-planning/moveit"
-    get_issues(repo_name)
+    source = "../scripts/robot_resources.txt"
+    with open(source, 'r') as f:
+        resources = f.readlines()
+    
+    # enumerate 0-70 from resources
+    for i in range(0,70):
+        resource = resources[i]
+        resource_items = resource.split(" ")
+        print("Processing resource: ",i, resource_items[0])
+        print("resource_items: ", resource_items)
+        if len(resource_items) != 2 and "none\n" not in resource_items: # this is labeled and valid
+            repo_name = resource_items[0][19:] # after "https://github.com/"
+            # repo_name = "ros-planning/moveit"
+            get_issues(repo_name)
 

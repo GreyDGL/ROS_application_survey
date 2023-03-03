@@ -20,3 +20,10 @@
   - [ ] The first study target is MoveIt: https://https://github.com/ros-planning/moveit
     - [ ] Issues categorization
     - [ ] Root cause analysis
+
+
+## Bug Categorization
+- General Bug: Bugs related to coding.
+- Robot Specific Bug
+  - Cross System Compatibility: Robot Operating System (ROS) has different versions, and the APIs have minor differences.
+  - 

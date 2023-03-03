@@ -1,8 +1,8 @@
-https://github.com/IntelRealSense/librealsense 6400 7
-https://github.com/facontidavide/PlotJuggler 3200 7
+https://github.com/IntelRealSense/librealsense 6400 none
+https://github.com/facontidavide/PlotJuggler 3200 none
 https://github.com/ros/ros 2100 system
 https://github.com/introlab/rtabmap 2000 algorithm
-https://github.com/BehaviorTree/BehaviorTree.CPP 1800 7
+https://github.com/BehaviorTree/BehaviorTree.CPP 1800 none
 https://github.com/octomap/octomap 1500 algorithm
 https://github.com/MRPT/mrpt 1500 algorithm
 https://github.com/ethz-asl/libpointmatcher 1300 algorithm
