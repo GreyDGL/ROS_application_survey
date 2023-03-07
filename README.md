@@ -27,4 +27,4 @@
 - General Bug: Bugs related to coding.
 - Robot Specific Bug
   - Cross System Compatibility: Robot Operating System (ROS) has different versions, and the APIs have minor differences.
-  - 
+

@@ -3,6 +3,7 @@ from github import Github
 import github
 import sqlite3
 from tqdm import tqdm
+import time
 
 
 def login_github(token_file = "secret_token"):
@@ -55,10 +56,15 @@ def issue_handler(issue):
 def get_issues(repo_name):
     repo = g.get_repo(repo_name)
     closed_issues = repo.get_issues(state='closed')
-    for issue in tqdm(closed_issues):
-        # check if it is a PR
-        linked_issue_number = None
+
+    for i in range(0, closed_issues.totalCount):
         try:
+            issue = closed_issues[i]
+            # Add a sleep to avoid rate limit. The rate-limit is 1000 requests per hour, so we sleep for 2s.
+            time.sleep(2)
+            # check if it is a PR
+            linked_issue_number = None
+
             PR = issue.as_pull_request()
             # check if it fixing an issue
             # the logic is to check if the PR body contains the issue number in the format of #<issue_number>
@@ -84,7 +90,7 @@ def get_issues(repo_name):
                 ## save both the PR and the linked issue
                 save_issue(issue, 1, linked_issue_number)
                 save_issue(linked_issue, 0, None)
-        
+
         # Issue is not a PR
         except github.GithubException as e:
             # TODO: pass to the issue handler
@@ -93,6 +99,12 @@ def get_issues(repo_name):
         # Body does not contain valid information. Skip
         except AttributeError as e:
             pass
+
+        # Rate limit exceeded. Sleep for 1 hr and continue
+        except github.RateLimitExceededException as e:
+            print("Rate limit exceeded. Sleeping for 1 hr...")
+            time.sleep(3600)
+            continue
 
         except Exception as e:
             print("Encountered exception: ", e)
@@ -109,7 +121,7 @@ if __name__ == "__main__":
         resources = f.readlines()
     
     # enumerate 0-70 from resources
-    for i in range(0,70):
+    for i in range(30,70):
         resource = resources[i]
         resource_items = resource.split(" ")
         print("Processing resource: ",i, resource_items[0])
