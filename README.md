@@ -9,7 +9,7 @@
 ## Development Progress
 - [x] Integration of PyGithub library to query Github Repos and Issues.
 - [x] Link PRs to corresponding issues. 
-- [ ] Explore the details of the issues, and link it to the corresponding commits.
+- [ ] Explore the details of the issues, and link it to the corresponding commits. (In Progress)
 - [ ] Find ways to categorize the issues.
 
 
@@ -17,9 +17,10 @@
 - [x] Manually label the projects into categories. 
   - [x] Develop a tool for easier labeling (`easy_labeling.py`)
 - [ ] Once the development work is completed, we will start to crawl the data from the target repositories. 
-  - [ ] The first study target is MoveIt: https://https://github.com/ros-planning/moveit
+  - [ ] The first study target is MoveIt: https://https://github.com/ros-planning/moveit (In Progress)
     - [ ] Issues categorization
     - [ ] Root cause analysis
+- [ ] Consider making a tool for easier categorization (similar to `easy_labeling.py`)
 
 
 ## Bug Categorization
